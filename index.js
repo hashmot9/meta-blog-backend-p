@@ -13,13 +13,23 @@ const port = process.env.PORT || 3000;
 
 // Middleware of json and cors
 app.use(express.json());
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    mathod: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://my-meta-blogs-project.vercel.app"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true, // if you're using cookies or auth headers
+}));
 
 // Routes
 app.use('/api/v1/blog',router)
